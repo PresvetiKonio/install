@@ -22,9 +22,9 @@ echo -e "${GREEN}Creating necessary directories...${NC}"
 mkdir -p ~/.local/share
 mkdir -p ~/.config
 
-# Clone the dotfiles repository
-echo -e "${GREEN}Cloning dotfiles repository...${NC}"
-git clone --bare https://github.com/yourusername/dotfiles.git $HOME/.dotfiles
+# Copy the .dotfiles directory to the new system
+echo -e "${GREEN}Copying dotfiles repository...${NC}"
+cp -r .dotfiles $HOME/
 
 # Define the alias in the current shell
 alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
