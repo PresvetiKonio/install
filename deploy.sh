@@ -26,11 +26,15 @@ mkdir -p ~/.config
 echo -e "${GREEN}Copying dotfiles repository...${NC}"
 cp -r .dotfiles $HOME/
 
-# Define the alias in the current shell
-alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'
+# Define the dotfiles function
+dotfiles() {
+    /usr/bin/git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" "$@"
+}
 
-# Add the alias to .bashrc for persistence
-echo "alias dotfiles='/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME'" >> ~/.bashrc
+# Add the function to .bashrc for persistence
+echo 'dotfiles() {
+    /usr/bin/git --git-dir="$HOME/.dotfiles/" --work-tree="$HOME" "$@"
+}' >> ~/.bashrc
 
 # Configure git to not show untracked files
 dotfiles config --local status.showUntrackedFiles no
