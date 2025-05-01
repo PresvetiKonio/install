@@ -25,6 +25,16 @@ if [ ! -f /etc/arch-release ]; then
     exit 1
 fi
 
+# Function to install AUR helper (yay)
+install_yay() {
+    if ! command -v yay &> /dev/null; then
+        print_status "Installing yay AUR helper..."
+        git clone https://aur.archlinux.org/yay.git /tmp/yay
+        (cd /tmp/yay && makepkg -si --noconfirm)
+        rm -rf /tmp/yay
+    fi
+}
+
 # Create backup directory
 backup_dir="$HOME/.dotfiles_backup_$(date +%Y%m%d_%H%M%S)"
 print_status "Creating backup directory at $backup_dir"
@@ -51,9 +61,48 @@ deploy_dotfile() {
     ln -sf "$source" "$target"
 }
 
+# Install base packages
+print_status "Installing base packages..."
+sudo pacman -S --needed base-devel git
+
+# Install yay
+install_yay
+
 # Install required packages
 print_status "Installing required packages..."
-sudo pacman -S --needed zsh git base-devel
+yay -S --needed \
+    zsh \
+    neovim \
+    kitty \
+    librewolf \
+    sway \
+    waybar \
+    rofi \
+    dunst \
+    picom \
+    alacritty \
+    lf \
+    nordic-theme \
+    sxhkd \
+    dmenu \
+    xorg-server \
+    xorg-xinit \
+    xorg-xsetroot \
+    ttf-nerd-fonts-symbols \
+    ttf-jetbrains-mono-nerd \
+    go \
+    npm \
+    cargo \
+    python \
+    python-pip \
+    gnupg \
+    less
+
+# Install window managers and status bar
+print_status "Installing window managers and related components..."
+yay -S --needed \
+    dwm \
+    slstatus
 
 # Deploy dotfiles
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.dotfiles"
@@ -70,11 +119,23 @@ deploy_dotfile "$DOTFILES_DIR/.local" "$HOME/.local"
 # Deploy games directory
 deploy_dotfile "$DOTFILES_DIR/games" "$HOME/games"
 
+# Set up various directories
+mkdir -p "$HOME/.local/share/go"
+mkdir -p "$HOME/.local/share/cargo"
+mkdir -p "$HOME/.config/npm"
+mkdir -p "$HOME/.local/bin/n"
+mkdir -p "$HOME/.local/share/gnupg"
+
 # Set zsh as default shell if it isn't already
 if [[ $SHELL != "/bin/zsh" ]]; then
     print_status "Setting zsh as default shell..."
     chsh -s /bin/zsh
 fi
+
+# Set up locale
+print_status "Setting up locale..."
+sudo sed -i 's/#en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen
+sudo locale-gen
 
 print_status "Dotfiles deployment complete!"
 print_status "Please log out and log back in for all changes to take effect." 
