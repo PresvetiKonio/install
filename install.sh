@@ -63,7 +63,7 @@ deploy_dotfile() {
 
 # Install base packages
 print_status "Installing base packages..."
-sudo pacman -S --needed base-devel git
+sudo pacman -S --needed base-devel git --noconfirm
 
 # Install yay
 install_yay
@@ -74,7 +74,7 @@ yay -S --needed \
     zsh \
     neovim \
     kitty \
-    librewolf \
+    librewolf-bin \
     sway \
     waybar \
     rofi \
@@ -82,7 +82,6 @@ yay -S --needed \
     picom \
     alacritty \
     lf \
-    nordic-theme \
     sxhkd \
     dmenu \
     xorg-server \
@@ -91,18 +90,15 @@ yay -S --needed \
     ttf-nerd-fonts-symbols \
     ttf-jetbrains-mono-nerd \
     go \
-    npm \
     cargo \
-    python \
-    python-pip \
     gnupg \
-    less
+    less --noconfirm
 
 # Install window managers and status bar
 print_status "Installing window managers and related components..."
 yay -S --needed \
     dwm \
-    slstatus
+    slstatus --noconfirm
 
 # Deploy dotfiles
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.dotfiles"
